@@ -11,8 +11,8 @@
     <title>Edit</title>
 </head>
 <body>
-
-<c:url value="/edit" var="var"/>
+<a href="/logout">Logout</a>
+<c:url value="/admin/edit" var="var"/>
 <form action="${var}" method="POST">
     <table border="1">
         <c:if test="${user != null}">
@@ -25,15 +25,9 @@
             </td>
         </tr>
         <tr>
-            <th>Surname</th>
+            <th>Password</th>
             <td>
-                <input type="text" name="surname" value="<c:out value='${user.password}' />"/>
-            </td>
-        </tr>
-        <tr>
-            <th>Mail</th>
-            <td>
-                <input type="text" name="email" value="<c:out value='${user.email}' />"/>
+                <input type="text" name="password" value="<c:out value='${user.password}' />"/>
             </td>
         </tr>
         <tr>

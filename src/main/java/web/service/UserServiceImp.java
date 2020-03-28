@@ -16,7 +16,6 @@ public class UserServiceImp implements UserService {
         this.userDao = userDao;
     }
 
-
     @Override
     public List<User> allUsers() {
         return userDao.allUsers();

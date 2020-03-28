@@ -1,13 +1,9 @@
 package web.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-import web.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +23,11 @@ public class UserController {
 	}
 
     @GetMapping(value = "login")
-    public ModelAndView  loginPage() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("login");
-    	return model;
+    public String  loginPage() {
+    	return "login";
     }
     @GetMapping(value = "user")
 	public String userPage(){
-		return "hello";
+		return "userPage";
 	}
-	// Все CRUD-операции и страницы для них должны быть доступны только пользователю с ролью admin по url: /admin/.
-	//5. Пользователь с ролью user должен иметь доступ только к своей домашней странице /user, где выводятся его данные.
-	// Доступ к этой странице должен быть только у пользователей с ролью user – не забывайте про несколько ролей у пользователя!
 }

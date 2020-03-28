@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -33,12 +32,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
+
+        http
+                //авторизовываем запросы на определенные страницы
+                .authorizeRequests()
+                .antMatchers("/admin", "/admin/**")
+                .hasAuthority("ADMIN").anyRequest().authenticated()
+                .and()
+                .formLogin()
                 // указываем страницу с формой логина
                 .loginPage("/login")
                 //указываем логику обработки при логине
                 .successHandler(new LoginSuccessHandler())
-//                .successHandler(auth)
                 // указываем action с формы логина
                 .loginProcessingUrl("/login")
                 // Указываем параметры логина и пароля с формы логина
@@ -56,20 +61,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login?logout")
                 //выключаем кроссдоменную секьюрность (на этапе обучения неважна)
                 .and().csrf().disable();
-
-        http
-                // делаем страницу регистрации недоступной для авторизированных пользователей
-                .authorizeRequests()
-                //страницы аутентификаци доступна всем
-                .antMatchers("/login").anonymous()
-                // защищенные URL
-                .antMatchers("/hello").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
     }
 
-        @Bean
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
+    }
 
+    @Bean
+    public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
+        return new LoginSuccessHandler();
     }
 
 }

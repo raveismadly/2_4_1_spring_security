@@ -2,16 +2,15 @@ package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import web.model.User;
 import web.service.UserService;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin")
 public class AdminController {
     private UserService service;
 
@@ -20,50 +19,46 @@ public class AdminController {
         this.service = service;
     }
 
-    @GetMapping(value = "/users")
-    public List<User> printAllUsers(ModelMap model) {
+    @GetMapping("/admin")
+    public String adminPage() {
+        return "adminPage";
+    }
+
+    @GetMapping(value = "/admin/users")
+    public String printAllUsers(ModelMap model) {
         List<User> list = service.allUsers();
         model.addAttribute("allUsers", list);
-        return list;
+        return "allUsers";
     }
 
-    @GetMapping(value = "/add")
-    public ModelAndView addUserPage() {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("addUser");
-        return model;
+    @GetMapping(value = "/admin/add")
+    public String addUserPage(Model model) {
+        model.addAttribute("addUser");
+        return "addUser";
     }
 
-    @PostMapping(value = "/add")
-    public ModelAndView addUser(@ModelAttribute("user") User user) {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("redirect:/users");
+    @PostMapping(value = "/admin/add")
+    public String addUser(@ModelAttribute("user") User user) {
         service.addUser(user);
-        return model;
+        return "redirect:/admin/users";
     }
 
-    @GetMapping(value = "/edit/{id}")
-    public ModelAndView editUserPage(@PathVariable("id")int id) {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("editUser");
-        model.addObject("user",service.getUserById(id));
-        return model;
+    @GetMapping(value = "/admin/edit/{id}")
+    public String editUserPage(@PathVariable("id") int id, Model model) {
+        model.addAttribute("user", service.getUserById(id));
+        return "editUser";
     }
 
-    @PostMapping(value = "/edit")
-    public ModelAndView editFilm(@ModelAttribute("user") User user) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/users");
+    @PostMapping(value = "/admin/edit")
+    public String editFilm(@ModelAttribute("user") User user) {
         service.updateUser(user);
-        return modelAndView;
+        return "redirect:/admin/users";
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public ModelAndView deleteUserPage(@PathVariable("id") int id) {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("redirect:/users");
+    @RequestMapping(value = "/admin/delete/{id}", method = RequestMethod.GET)
+    public String deleteUserPage(@PathVariable("id") int id) {
         User user = service.getUserById(id);
         service.deleteUser(user);
-        return model;
+        return "redirect:/admin/users";
     }
 }
